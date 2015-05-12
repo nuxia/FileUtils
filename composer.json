@@ -1,0 +1,15 @@
+{
+    "name": "nuxia/fileutils",
+    "license": "MIT",
+    "type": "php-component",
+    "description": "File management (write, read) and export as file",
+    "autoload": {
+        "psr-4": { "Nuxia\\Component\\FileUtils\\": ""}
+    },
+    "require": {
+        "php": ">=5.4",
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    }
+}
