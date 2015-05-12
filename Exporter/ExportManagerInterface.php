@@ -5,15 +5,15 @@ namespace Nuxia\Component\FileUtils\Exporter;
 interface ExportManagerInterface
 {
     /**
-     * @param array $datas
-     * @param string $filename
+     * @param  array       $data
+     * @param  string|null $filename
      *
      * @return StreamedFileResponse
      */
-    public function export($datas, $filename);
+    public function export($data, $filename = null);
 
     /**
-     * @return stringc
+     * @return string
      */
     public function getFileExtension();
 }

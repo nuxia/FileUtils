@@ -3,9 +3,9 @@
 namespace Nuxia\Component\FileUtils\File;
 
 use Nuxia\Component\FileUtils\Exception\FileNotFoundException;
+use Nuxia\Component\FileUtils\File\Reader\ReaderInterface;
 use Nuxia\Component\FileUtils\File\Writer\WriterInterface;
 use Nuxia\Component\FileUtils\Iterator\FileIteratorInterface;
-use Nuxia\Component\FileUtils\Reader\ReaderInterface;
 
 abstract class AbstractFile implements FileInterface
 {
@@ -13,7 +13,12 @@ abstract class AbstractFile implements FileInterface
      * A full path to file that is being written / reader
      * @var string
      */
-    protected $pathToFile;
+    protected $path;
+
+    /**
+     * @var string|null
+     */
+    protected $filename;
 
     /**
      * @var FileIteratorInterface
@@ -25,21 +30,26 @@ abstract class AbstractFile implements FileInterface
      * Stream of current file
      */
     protected $filePointer;
-    protected $writer;
-    protected $reader;
-
-    public function __construct($pathToFile)
-    {
-        ini_set('auto_detect_line_endings', true);
-        $this->pathToFile = $pathToFile;
-    }
 
     /**
-     * @return string
+     * @var WriterInterface
      */
-    public function getPath()
+    protected $writer;
+
+    /**
+     * @var ReaderInterface
+     */
+    protected $reader;
+
+    /**
+     * @param string      $path
+     * @param string|null $filename
+     */
+    public function __construct($path, $filename = null)
     {
-        return $this->pathToFile;
+        ini_set('auto_detect_line_endings', true);
+        $this->path = $path;
+        $this->filename = $filename;
     }
 
     /**
@@ -51,6 +61,49 @@ abstract class AbstractFile implements FileInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getIterator()
+    {
+        if (!$this->exists()) {
+            throw new FileNotFoundException($this->path);
+        }
+        return $this->iterator;
+    }
+
+    /**
+     * @param string $filename
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilePointer()
+    {
+        return $this->filePointer;
+    }
+
+    /**
      * @return void
      */
     public function __destruct()
@@ -59,7 +112,7 @@ abstract class AbstractFile implements FileInterface
     }
 
     /**
-     * @return void
+     * {@inheritDoc}
      */
     public function close()
     {
@@ -69,54 +122,36 @@ abstract class AbstractFile implements FileInterface
     }
 
     /**
-     * @param $mode
-     *
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
     public function open($mode)
     {
-        $this->filePointer = fopen($this->pathToFile, $mode);
+        $this->filePointer = fopen($this->path, $mode);
 
         if (false === $this->filePointer) {
-            throw new FileNotFoundException($this->pathToFile);
+            throw new FileNotFoundException($this->path);
         }
+
+        return $this->filePointer;
     }
 
     /**
-     * @return void
+     * {@inheritDoc}
      */
     public function delete()
     {
         $this->close();
 
         if ($this->exists()) {
-            unlink($this->pathToFile);
+            unlink($this->path);
         }
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
     public function exists()
     {
-        return file_exists($this->pathToFile);
+        return file_exists($this->path);
     }
-
-    /**
-    * @return ressource
-    */
-    public function getFilePointer()
-    {
-        return $this->filePointer;
-    }
-
-    /**
-     * @return ReaderInterface
-     */
-    abstract public function getReader();
-
-    /**
-    * @return WriterInterface
-    */
-    abstract public function getWriter();
 }

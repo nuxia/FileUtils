@@ -4,21 +4,24 @@ namespace Nuxia\Component\FileUtils\File\Reader;
 
 use Gedmo\Sluggable\Util\Urlizer;
 use Nuxia\Component\FileUtils\Exception\FileIteratorMissingException;
-use Nuxia\Component\FileUtils\File\CsvFile;
 use Nuxia\Component\FileUtils\Iterator\CsvFileIterator;
 
 class CsvReader extends AbstractReader implements CsvReaderInterface
 {
-    protected $iterator = null;
-
-    public function __construct(CsvFile $file, CsvFileIterator $iterator = null)
+    /**
+     * @return CsvFileIterator
+     */
+    public function getIterator()
     {
-        parent::__construct($file);
-        $this->iterator = $iterator === null ? $file->getIterator() : $iterator;
+        if (!$this->iterator instanceof CsvFileIterator) {
+            throw new \RuntimeException('Iterator must be an instance of CsvFileIteratorInterface');
+        }
+
+        return parent::getIterator();
     }
 
     /**
-     * @param callable $formatter
+     * @param  callable $formatter
      *
      * @throws \Nuxia\Component\FileUtils\Exception\FileIteratorMissingException
      */
@@ -44,15 +47,10 @@ class CsvReader extends AbstractReader implements CsvReaderInterface
     }
 
     /**
-     * @param mixed $columnNames
+     * @param array $columnNames
      */
-    public function setColumnNames($columnNames)
+    public function setColumnNames(array $columnNames)
     {
-        $this->iterator->setColumnNames($columnNames);
-    }
-
-    public function getIterator()
-    {
-        return $this->iterator;
+        $this->getIterator()->setColumnNames($columnNames);
     }
 }

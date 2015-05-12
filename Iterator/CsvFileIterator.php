@@ -13,26 +13,25 @@ class CsvFileIterator extends FileIterator
     protected $names;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $ignoreFirstLine;
 
     /**
-     * @param        $pathToFile
+     * @param string $path
      * @param string $delimiter
      * @param string $fieldEnclosure
      * @param string $escapeChar
      */
-    public function __construct(
-        $pathToFile, $delimiter = ';', $fieldEnclosure = "\"", $escapeChar = '\\'
-    ) {
-        parent::__construct($pathToFile, FileManipulatorInterface::TOP_TO_BOTTOM_READ_ONLY);
+    public function __construct($path, $delimiter = ';', $fieldEnclosure = "\"", $escapeChar = '\\')
+    {
+        parent::__construct($path, FileManipulatorInterface::TOP_TO_BOTTOM_READ_ONLY);
         $this->setFlags(self::READ_CSV);
         $this->setCsvControl($delimiter, $fieldEnclosure, $escapeChar);
     }
-
+    
     /**
-     * @param array $names
+     * {@inheritDoc}
      */
     public function setColumnNames(array $names)
     {
@@ -40,7 +39,7 @@ class CsvFileIterator extends FileIterator
     }
 
     /**
-     * @return array|null|string
+     * {@inheritDoc}
      */
     public function current()
     {
@@ -60,7 +59,7 @@ class CsvFileIterator extends FileIterator
     }
 
     /**
-     * @return bool
+     * {@inheritDoc}
      */
     public function valid()
     {
@@ -74,7 +73,7 @@ class CsvFileIterator extends FileIterator
     }
 
     /**
-     * @param CsvFile $csvFile
+     * @param  CsvFile $csvFile
      *
      * @return CsvFileIterator
      */
@@ -84,7 +83,7 @@ class CsvFileIterator extends FileIterator
     }
 
     /**
-     * @return $this
+     * @return CsvFileIterator
      */
     public function ignoreFirstLine()
     {

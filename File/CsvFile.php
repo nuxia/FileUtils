@@ -1,7 +1,6 @@
 <?php
 namespace Nuxia\Component\FileUtils\File;
 
-use Nuxia\Component\FileUtils\Exception\FileNotFoundException;
 use Nuxia\Component\FileUtils\File\Reader\CsvReader;
 use Nuxia\Component\FileUtils\File\Writer\CsvWriter;
 
@@ -20,20 +19,7 @@ class CsvFile extends AbstractFile
     /**
      * @var string
      */
-    protected $lineTerminator = '\n';
-
-    /**
-     * @return \Traversable
-     *
-     * @throws \RuntimeException
-     */
-    public function getIterator()
-    {
-        if (!$this->exists()) {
-            throw new FileNotFoundException($this->pathToFile);
-        }
-        return $this->iterator;
-    }
+    protected $lineDelimiter = '\n';
 
     /**
      * @return string
@@ -70,21 +56,21 @@ class CsvFile extends AbstractFile
     /**
      * @return string
      */
-    public function getLineTerminator()
+    public function getLineDelimiter()
     {
-        return $this->lineTerminator;
+        return $this->lineDelimiter;
     }
 
     /**
-     * @param string $lineTerminator
+     * @param string $lineDelimiter
      */
-    public function setLineTerminator($lineTerminator)
+    public function setLineTerminator($lineDelimiter)
     {
-        $this->lineTerminator = $lineTerminator;
+        $this->lineTerminator = $lineDelimiter;
     }
 
     /**
-     * @return CsvWriter|Writer\WriterInterface
+     * {@inheritDoc}
      */
     public function getWriter()
     {
@@ -95,7 +81,7 @@ class CsvFile extends AbstractFile
     }
 
     /**
-     * @return CsvReader
+     * {@inheritDoc}
      */
     public function getReader()
     {

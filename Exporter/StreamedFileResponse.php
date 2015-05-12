@@ -10,7 +10,7 @@ class StreamedFileResponse extends StreamedResponse
 {
     /**
      * @param string $filename
-     * @param int           $status
+     * @param int    $status
      */
     public function __construct($filename, $status = 200)
     {
@@ -20,7 +20,7 @@ class StreamedFileResponse extends StreamedResponse
 
     /**
      * @param FileInterface $file
-     * @param               $content
+     * @param mixed         $content
      *
      * @return $this
      */

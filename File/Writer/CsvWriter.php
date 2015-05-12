@@ -4,24 +4,47 @@ namespace Nuxia\Component\FileUtils\File\Writer;
 
 use Nuxia\Component\FileUtils\Exception\FileCantWriteException;
 use Nuxia\Component\FileUtils\File\CsvFile;
-use Nuxia\Component\FileUtils\File\FileManipulatorInterface;
 
-class CsvWriter extends AbstractWriter implements CsvWriterInterface
+class CsvWriter extends AbstractWriter
 {
+    /**
+     * @param CsvFile $file
+     */
     public function __construct(CsvFile $file)
     {
         parent::__construct($file);
     }
 
+    /**
+     * @return CsvFile
+     *
+     * @throws \RuntimeException
+     */
+    public function getFile()
+    {
+        if (!$this->file instanceof CsvFile) {
+            throw new \RuntimeException('File must be an instance of CsvFile');
+        }
+
+        return parent::getFile();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setColumnsNames(array $columnsNames)
     {
         array_unshift($this->content, $columnsNames);
     }
 
-    public function appendContent($content, array $columnsNames = array())
+    /**
+     * @param array $content
+     * @param array $columnsNames
+     */
+    public function appendContent(array $content, array $columnsNames = array())
     {
         //@TODO considerer l'ordre d'écriture pour bien remplir le content
-        if (!is_resource($this->file->getFilePointer())) {
+        if (!is_resource($this->getFile()->getFilePointer())) {
             parent::setContent($content);
             $this->setColumnsNames($columnsNames);
         } else {
@@ -30,29 +53,21 @@ class CsvWriter extends AbstractWriter implements CsvWriterInterface
     }
 
     /**
-     * @param array $content
-     *
-     * @throws \Exception
+     * {@inheritDoc}
      */
-    public function write(array $content, array $columnsNames = array(), $append = false)
+    public function write($content, $append = false)
     {
-        if (!is_resource($this->file->getFilePointer())) {
-            $mode = $append ?
-                FileManipulatorInterface::BOTTOM_TO_TOP_READ_ONLY :
-                FileManipulatorInterface::TOP_TO_BOTTOM_READ_ONLY_OR_CREATE
-            ;
-            $this->file->open($mode);
-        }
+        $this->prepareWrite($append);
         if ($content) {
             $response = fputcsv(
                 $this->file->getFilePointer(),
                 array_values($content),
-                $this->file->getFieldDelimiter(),
-                $this->file->getFieldEnclosure()
+                $this->getFile()->getFieldDelimiter(),
+                $this->getFile()->getFieldEnclosure()
             );
 
             if (false === $response) {
-                throw new FileCantWriteException($this->file->getPath());
+                throw new FileCantWriteException($this->getFile()->getPath());
             }
         }
     }
