@@ -2,6 +2,11 @@
 
 namespace Nuxia\Component\FileUtils\Exception;
 
+/**
+ * Exception thrown
+ *
+ * @author Yannick Snobbert <yannick.snobbert@gmail.com>
+ */
 class FileCantWriteException extends FileException
 {
     /**
