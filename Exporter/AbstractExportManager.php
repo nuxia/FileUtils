@@ -2,7 +2,7 @@
 
 namespace Nuxia\Component\FileUtils\Exporter;
 
-use Gedmo\Sluggable\Util\Urlizer;
+use Behat\Transliterator\Transliterator;
 use Nuxia\Component\FileUtils\File\FileInterface;
 
 abstract class AbstractExportManager implements ExportManagerInterface
@@ -10,7 +10,7 @@ abstract class AbstractExportManager implements ExportManagerInterface
     /**
      * @param  FileInterface $file
      * @param  mixed         $data
-     * @param  bool          $unaccent
+     * @param  bool          $unAccent
      *
      * @return StreamedFileResponse
      *
@@ -21,12 +21,13 @@ abstract class AbstractExportManager implements ExportManagerInterface
         if (null === $file->getFilename()) {
             throw new \RuntimeException('Filename must be set');
         }
-        $response = new StreamedFileResponse(Urlizer::urlize($file->getFilename()) . $this->getFileExtension());
+
+        $response = new StreamedFileResponse(Transliterator::urlize($file->getFilename()) . $this->getFileExtension());
 
         if (true === $unAccent) {
             foreach ($data as $rowIndex => $row) {
                 foreach ($row as $dataIndex => $dataValue) {
-                    $data[$rowIndex][$dataIndex] = Urlizer::unaccent($dataValue);
+                    $data[$rowIndex][$dataIndex] = Transliterator::unaccent($dataValue);
 
                 }
             }
