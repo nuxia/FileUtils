@@ -1,5 +1,5 @@
 {
-    "name": "nuxia/fileutils",
+    "name": "nuxia/file-utils",
     "license": "MIT",
     "type": "php-component",
     "description": "File management (write, read) and export as file",
